@@ -87,6 +87,8 @@ namespace P01DAW__2022RS650_2022JH650__Reservas.Controllers
         {
             try
             {
+                //para controlar el identity en BD en AÑADIR
+                reserva.reservaid = 0;
                 parqueoDBContexto.reserva.Add(reserva);
                 parqueoDBContexto.SaveChanges();
                 return Ok(reserva);
