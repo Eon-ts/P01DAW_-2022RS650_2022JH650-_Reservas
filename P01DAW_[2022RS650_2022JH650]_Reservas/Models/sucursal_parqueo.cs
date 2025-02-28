@@ -11,7 +11,6 @@ namespace P01DAW__2022RS650_2022JH650__Reservas.Models
         public string? direccion { get; set; }
         public string? telefono { get; set; }
         public int? administrador { get; set; }
-        public int? nro_espacio_existente { get; set; }
         /*
     CREATE TABLE sucursal_parqueo (
     sucursalid INT IDENTITY PRIMARY KEY,

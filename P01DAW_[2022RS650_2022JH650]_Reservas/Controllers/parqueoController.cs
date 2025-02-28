@@ -110,6 +110,18 @@ namespace P01DAW__2022RS650_2022JH650__Reservas.Controllers
             {
                 //para controlar el identity en BD en AÑADIR
                 parqueo.parqueoid = 0;
+
+                var sucursal = (from s in parqueoDBContexto.sucursal_parqueo
+                                where s.sucursalid == parqueo.sucursalid
+                                select s).FirstOrDefault();
+
+
+                if (sucursal == null)
+                {
+                    return NotFound("La sucursal especificada no existe.");
+                }
+
+
                 parqueoDBContexto.parqueo.Add(parqueo);
                 parqueoDBContexto.SaveChanges();
                 return Ok(parqueo);
@@ -147,10 +159,22 @@ namespace P01DAW__2022RS650_2022JH650__Reservas.Controllers
             parqueo? parqueo = (from e in parqueoDBContexto.parqueo
                                where e.parqueoid == id
                                select e).FirstOrDefault();
+
             if (parqueo == null)
             {
                 return NotFound();
 
+            }
+            var fechaActual = DateTime.Now.Date;
+            var reservasFuturas = (from r in parqueoDBContexto.reserva
+                                   join p in parqueoDBContexto.parqueo on r.parqueoid equals p.parqueoid
+                                   where r.fecha >= fechaActual && r.parqueoid == id
+                                   select r).ToList();
+
+            // Eliminar reservas futuras si existen
+            if (reservasFuturas.Any())
+            {
+                parqueoDBContexto.reserva.RemoveRange(reservasFuturas);
             }
             parqueoDBContexto.parqueo.Attach(parqueo);
             parqueoDBContexto.parqueo.Remove(parqueo);

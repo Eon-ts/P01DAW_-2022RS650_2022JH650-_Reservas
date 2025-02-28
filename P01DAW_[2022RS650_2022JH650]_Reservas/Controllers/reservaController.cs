@@ -69,9 +69,22 @@ namespace P01DAW__2022RS650_2022JH650__Reservas.Controllers
             var horaReserva = TimeSpan.Parse(reserva.hora);
             var fechaHoraReserva = fechaReserva.Add(horaReserva);
 
+            var parqueo = (from e in parqueoDBContexto.parqueo
+                           where e.parqueoid == reserva.parqueoid
+                           select e).FirstOrDefault();
+
             if (fechaHoraReserva <= DateTime.Now)
             {
                 return BadRequest("No se puede cancelar una reserva pasada.");
+            }
+
+            if (parqueo == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                parqueo.estado = "Disponible";
             }
 
             reserva.estado = "Cancelada";
@@ -89,8 +102,22 @@ namespace P01DAW__2022RS650_2022JH650__Reservas.Controllers
             {
                 //para controlar el identity en BD en AÑADIR
                 reserva.reservaid = 0;
-                parqueoDBContexto.reserva.Add(reserva);
-                parqueoDBContexto.SaveChanges();
+                reserva.estado = "Confirmada";
+
+                var parqueo = (from e in parqueoDBContexto.parqueo
+                               where e.parqueoid == reserva.parqueoid
+                               select e).FirstOrDefault();
+                if(parqueo == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    parqueo.estado = "Ocupado";
+                    parqueoDBContexto.reserva.Add(reserva);
+                    parqueoDBContexto.SaveChanges();
+                }
+
                 return Ok(reserva);
             }
             catch (Exception ex)
