@@ -9,7 +9,7 @@ namespace P01DAW__2022RS650_2022JH650__Reservas.Models
     {
         [Key]
         public int reservaid { get; set; }
-        public DateTime? fecha { get; set; }
+        public DateTime fecha { get; set; }
         public string? hora { get; set; }
         public int? cant_hora { get; set; }
         public string? estado { get; set; }
